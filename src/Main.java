@@ -1,79 +1,88 @@
-import java.util.BitSet;
-import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.util.*;
+
 public class Main {
     public static void main(String[] args)
     {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Hello world!");
-        System.out.print("Введите число n: ");
-        int n= in.nextInt();
-        System.out.println("Треугольное число: " + sumNumber(n));
-        System.out.println("Факториял числа: " + multNumber(n));
-        System.out.println("Простые числа до 1000: ");
-        printAllPrimes(1000);
-        System.out.println("Калькулятор: ");
-        System.out.print("Введите первое число: ");
-        int firstNum = in.nextInt();
-        System.out.print("Введите второе число: ");
-        int secondNum = in.nextInt();
-        System.out.print("Введите операцию + - * /: ");
-        String operation = in.next();
-        calculate(firstNum, secondNum, operation);
+        firstTask();
+        secondTask();
+        thirdTask();
+        fourthTask();
+
     }
-    public static void calculate(int firstNum, int secondNum, String operation){
-        System.out.print("Результат: ");
-        switch (operation){
-            case "+":
-                System.out.println(firstNum + secondNum);
+    public static void firstTask(){
+        //Реализуйте метод, который запрашивает у пользователя ввод дробного числа (типа float), и возвращает введенное значение. Ввод текста вместо числа не должно приводить к падению приложения, вместо этого, необходимо повторно запросить у пользователя ввод данных.
+        System.out.print("Введите число типа float: ");
+
+        while (true) {
+            try {
+                Scanner in = new Scanner(System.in);
+                float n = in.nextFloat();
                 break;
-            case "-":
-                System.out.println(firstNum - secondNum);
-                break;
-            case "*":
-                System.out.println(firstNum * secondNum);
-                break;
-            case "/":
-                if (secondNum == 0){
-                    System.out.println("второе число не может быть 0 ");
-                    break;
-                }
-                System.out.println(firstNum / secondNum);
-                break;
-            default:
-                System.out.println("Введен не корректный оператор ");
+            } catch (InputMismatchException e) {
+                System.out.println("Вы ввели число не того типа попробуйте еще раз ");
+
+            }
+        }
+        System.out.println("Поздравляю ");
+    }
+
+    public static void secondTask(){
+        //Если необходимо, исправьте данный код (задание 2
+        try {
+            int d = 0;
+            int [] intArray = new int[10];
+            double catchedRes1 = intArray[8] / d;
+            System.out.println("catchedRes1 = " + catchedRes1);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Индекс маловат " + e);
+        } catch (ArithmeticException e){
+            System.out.println("Деление на 0  " + e);
         }
 
     }
-    public static int sumNumber(int n){
-        int result = 0;
-        for (int i=1; i<=n; i++) {
-            result += i;
+    public static void thirdTask()  {
+        try {
+            int a = 90;
+            int b = 3;
+            System.out.println(a / b);
+            printSum(23, 234);
+            int[] abc = { 1, 2 };
+            abc[3] = 9;
+        } catch (IndexOutOfBoundsException ex) {
+            System.out.println("Массив выходит за пределы своего размера!");
+        } catch (NullPointerException ex) {
+            System.out.println("Указатель не может указывать на null!");
+        } catch (Throwable ex) {
+            System.out.println("Что-то пошло не так...");
         }
+    }
+    public static void printSum(Integer a, Integer b) {
+        System.out.println(a + b);
+    }
+
+    public static void fourthTask(){
+        try {
+            String s = inputString();
+        } catch (MyException e){
+            System.out.println("Вызвано исключение " + e);
+        }
+    }
+
+    public static String inputString() throws MyException{
+        System.out.print("Введите строку: ");
+        Scanner in = new Scanner(System.in);
+        String result = in.nextLine();
+        if (result.isEmpty() ) {
+            throw new MyException("Строка не может быть пустоой");
+        }
+
         return result;
     }
-    public static int multNumber(int n){
-        int result = 1;
-        for (int i=1; i<=n; i++) {
-            result *= i;
-        }
-        return result;
-    }
-    public static void printAllPrimes(int sieveSize) {
-        var sieve = new BitSet(sieveSize);
-        sieve.set(0, sieveSize - 1, true);
-        sieve.set(0, false);
-        sieve.set(1, false);
-        for (int i = 2; i * i < sieve.length(); i++) {
-            if (sieve.get(i)) {
-                for (int j = i * i; j < sieve.length(); j += i) {
-                    sieve.set(j, false);
-                }
-            }
-        }
-        for (int i = 2; i < sieve.length(); i++) {
-            if (sieve.get(i)) {
-                System.out.print(" " + i);
-            }
+
+    private static class MyException extends Exception {
+        public MyException(String str) {
+            super(str);
         }
     }
 }
