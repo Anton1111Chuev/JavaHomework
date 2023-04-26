@@ -1,87 +1,70 @@
-import java.io.FileNotFoundException;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
+
+    private final static String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])\\.(0?[1-9]|1[012])"
+            + "\\.((19|20)\\d\\d)";
+    private final static String PHONE_PATTERN = "^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$";
+
     public static void main(String[] args)
     {
-        firstTask();
-        secondTask();
-        thirdTask();
-        fourthTask();
+        System.out.println("Введите: Фамилия Имя Отчество дата рождения(дд.мм.гггг) номер телефона(8-ххх-ххх-хх-хх) пол(f или m) через пробел");
+        int length_Data = 6;
 
-    }
-    public static void firstTask(){
-        //Реализуйте метод, который запрашивает у пользователя ввод дробного числа (типа float), и возвращает введенное значение. Ввод текста вместо числа не должно приводить к падению приложения, вместо этого, необходимо повторно запросить у пользователя ввод данных.
-        System.out.print("Введите число типа float: ");
-
-        while (true) {
-            try {
-                Scanner in = new Scanner(System.in);
-                float n = in.nextFloat();
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Вы ввели число не того типа попробуйте еще раз ");
-
-            }
-        }
-        System.out.println("Поздравляю ");
-    }
-
-    public static void secondTask(){
-        //Если необходимо, исправьте данный код (задание 2
-        try {
-            int d = 0;
-            int [] intArray = new int[10];
-            double catchedRes1 = intArray[8] / d;
-            System.out.println("catchedRes1 = " + catchedRes1);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Индекс маловат " + e);
-        } catch (ArithmeticException e){
-            System.out.println("Деление на 0  " + e);
-        }
-
-    }
-    public static void thirdTask()  {
-        try {
-            int a = 90;
-            int b = 3;
-            System.out.println(a / b);
-            printSum(23, 234);
-            int[] abc = { 1, 2 };
-            abc[3] = 9;
-        } catch (IndexOutOfBoundsException ex) {
-            System.out.println("Массив выходит за пределы своего размера!");
-        } catch (NullPointerException ex) {
-            System.out.println("Указатель не может указывать на null!");
-        } catch (Throwable ex) {
-            System.out.println("Что-то пошло не так...");
-        }
-    }
-    public static void printSum(Integer a, Integer b) {
-        System.out.println(a + b);
-    }
-
-    public static void fourthTask(){
-        try {
-            String s = inputString();
-        } catch (MyException e){
-            System.out.println("Вызвано исключение " + e);
-        }
-    }
-
-    public static String inputString() throws MyException{
-        System.out.print("Введите строку: ");
         Scanner in = new Scanner(System.in);
-        String result = in.nextLine();
-        if (result.isEmpty() ) {
-            throw new MyException("Строка не может быть пустоой");
+        String inData = in.nextLine();
+        String[] arr = inData.split(" ");
+
+        try {
+            if (arr.length != length_Data) {throw new MyException();}
+        } catch (MyException e){
+            System.out.println(e);
+            return;
         }
 
-        return result;
+        try {
+            CheckAndCallThrows(arr[0], "^[a-zA-Z]*$", "Ошибка в фамилии ");
+            CheckAndCallThrows(arr[1], "^[a-zA-Z]*$", "Ошибка в имени ");
+            CheckAndCallThrows(arr[2], "^[a-zA-Z]*$", "Ошибка в отчестве ");
+            CheckAndCallThrows(arr[3], DATE_PATTERN     , "Ошибка в дате ");
+            CheckAndCallThrows(arr[4], PHONE_PATTERN    , "Ошибка в номере телефона ");
+            CheckAndCallThrows(arr[5], "[fm]"       , "Ошибка в пол ");
+
+        } catch (MyException e) {
+            System.out.println(e);
+            return;
+        }
+
+        try(FileWriter writer = new FileWriter("text.txt", false))
+        {
+            writer.write(inData);
+            writer.flush();
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
     }
+
+
+
+
+    private static void CheckAndCallThrows(String text, String reg, String errText)throws MyException{
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(text);
+        if (!matcher.matches()) {throw new MyException(errText);}
+    }
+
 
     private static class MyException extends Exception {
-        public MyException(String str) {
+        public MyException() {
+            this("Не правильный формат ввода, необходим ввод: Фамилия Имя Отчество дата рождения номер телефона пол через пробел");
+        }
+       public MyException(String str ) {
             super(str);
         }
     }
